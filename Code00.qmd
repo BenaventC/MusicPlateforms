@@ -1,0 +1,442 @@
+---
+title: "Multi homing in the music platformscape"
+bibliography: multihoming.bib
+format: pdf
+editor: visual
+execute:
+  warning: false
+  error: false
+---
+
+# Multi-homing
+
+There is a large literature about multi-homing, mainly from economics and focused on the competition function . Multi-homing is important because it reduce switching cost and other market barriers.
+
+Multi-homing come from complementary between platforms. They could be vertical or horizontal, vertical when they complement different activities ; search and order, horizontal when they extend the space of choice.
+
+Multi-homing is expected when engagement is high and usages are sophisticated. A dj need an intense level of search, a sophisticated practice of curation, and a clear willingness to contribute as a productor : playlist, even mash-up. Ordinary consumption of music favor hits and fashionable tunes that we listen as complement of others activities.
+
+Some elements of literature :
+
+@hong_kong_university_of_science_and_technology_multihoming_2014
+
+@stewart_examining_2017
+
+@ozalp_platform_2017
+
+@haan_choosing_2021
+
+@scott_morton_platform_2021
+
+@chen_platform_2022
+
+The sociology of reception has develop a theory of cultural omnivorism
+
+# Tools
+
+```{r 01}
+library(tidyverse)
+library(FactoMineR)
+library(factoextra)
+```
+
+# Data
+
+```{r 02}
+df <- read_csv("MusicPlateform2.csv")%>%
+  rename(ID=1,
+         Rock=2,
+         PopInter=3,
+         HipHop=4,
+         World=5,
+         Salsa=6,
+         Classique=7,
+         Techno=8,
+         HardRock=9,
+         Baroque=10,
+         Folk=11,
+         Reggae=12,
+         ChansonFrançaise=13,
+         RockAlt=14,
+         Dance=15,
+         Jazz=16,
+         AfroPop=17,
+         Opera=18,
+         Arabic=19,
+         Blues=20,
+         JK_pop=21,
+         Rap=22,
+         SoulFunk=23,
+         S_travail=24,
+         S_Live=25,
+         S_Voiture=26,
+         S_Menage=27,
+         S_Ami=28,
+         S_Bars=29,
+         S_Transport=30,
+         S_Lire=31,
+         S_Douche=32,
+         D_Vynil=33,
+         D_Streaming=34,
+         D_smartphone=35,
+         D_concert=36,
+         D_laptop=37,
+         D_ecouteurs=38,
+         D_mix=39,
+         D_radiotv=40,
+         P_Youtube=42,
+         P_Spotify=43,
+         P_Deezer=44,
+         P_Souncloud=45,
+         P_Bandcamp=46, 
+         P_Discog=47,
+         P_Tidal=48,
+         P_Amazon=49,
+         P_Mixcloud=50,
+         P_AppleM=51,
+         P_Qobuz=52,
+         P_Pandora=53,
+         P_Netease=54,
+         Time=68,
+         Spending=69,
+         Value=70, 
+         Age=71,
+         Genre=72)
+
+
+df$Age<-factor(df$Age, ordered = TRUE, 
+                                levels = c("moins de 18 ans", "de 18 à 20 ans",
+                                           "de 21 à 25 ans", "de 26 à 30 ans",
+                                           "de 31 à 40 ans", "de 41 à 60 ans",
+                                           "plus de 60 ans"))
+
+table(df$Age)
+
+#color palette
+col<-c("Coral","Pink","Gold","Orange")
+
+```
+
+# The taste
+
+What are the styles that people like ? How they combined them ?
+
+First step, a general view after small recoding.
+
+Rien ne se dégage vraiment. Les adoré sont le rock, la chanson et jazz. Mais c'est pas clair. Ce qui n'est pas aimé c'est la ou la kpop, le hard rock et l'opéra. Des formes extrêmes ou exigeantes. Il ne peut pas y avoir d'analyse simple de ce type de configuration. Elle représente une moyenne et masque sans doute de grande dispersion, il va falloir segmenter, trouver des configurations plus essentielles.
+
+```{r 03}
+foo<- df %>%
+  select(1:23) %>% 
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+
+foo$value[foo$value=="J'aime beaucoup"]<-"J'adore"
+foo$value[foo$value=="J'aime pas mal"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime un peu"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime pas trop"]<-"Je n'aime pas"
+
+#variable définition
+foo$value <- factor(foo$value, levels = c("Je n'aime pas",
+                                          "Je ne connais pas",
+                                          "Je peux aimer",
+                                          "J'adore"))
+#just counting
+foo<-foo%>%
+  group_by(variable, value)%>%
+  summarise(n=n())
+
+
+#plot
+ggplot(foo, aes(x = reorder(variable, value), y=n, group=value))+
+  geom_bar(stat="identity", aes(fill=value))+
+  coord_flip()+
+  labs(x=NULL, y =NULL)+
+  scale_fill_manual(values=col)
+```
+
+C'est ce qu'on va faire dans la série d'opérations qui suivent
+
+```{r 04}
+
+#construire le bon tableau
+
+foo<- df %>%
+  select(1:23) %>% 
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+table(foo$value)
+foo$value[foo$value=="J'aime beaucoup"]<-"J'adore"
+foo$value[foo$value=="J'aime pas mal"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime un peu"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime pas trop"]<-"Je n'aime pas"
+
+foo$value <- factor(foo$value, levels = c("Je n'aime pas",
+                                          "Je ne connais pas",
+                                          "Je peux aimer",
+                                          "J'adore"))
+
+
+foo$value2[foo$value=="Je n'aime pas"]<-1
+foo$value2[foo$value=="Je ne connais pas"]<-2
+foo$value2[foo$value=="Je peux aimer"]<-3
+foo$value2[foo$value=="J'adore"]<-4
+
+foo<-foo %>%
+  select(-value)%>%
+  pivot_wider(ID,names_from = "variable", values_from = "value2")
+
+#PCA
+fit<-PCA(foo[2:19],ncp = 4, graph =FALSE)
+fviz_eig(fit, addlabels = TRUE, ylim = c(0, 30))
+
+fviz_pca_var(fit,  axes = c(2, 3), col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE # Évite le chevauchement de texte
+             )
+
+# Dissimilarity matrix
+d <- dist(t(foo[2:19]), method = "manhattan")
+
+# Hierarchical clustering using Ward Linkage
+hc1 <- hclust(d, method = "ward" )
+sub_grp <- cutree(hc1, k = 7)
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+rect.hclust(hc1, k = 7, border = 2:5)
+
+fviz_cluster(list(data = d, cluster = sub_grp))
+
+```
+
+## Segmentation
+
+We want to identify groups of peaople based on the style they prefer.
+
+```{r 05}
+#number of groups
+k=5
+
+# Dissimilarity matrix
+d <- dist(foo[2:23], method = "manhattan")
+
+# Hierarchical clustering using Ward Linkage
+hc1 <- hclust(d, method = "ward" )
+sub_grp <- cutree(hc1, k = k)
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+rect.hclust(hc1, k = k, border = 2:5)
+
+fviz_cluster(list(data = d, cluster = sub_grp))
+
+foo1<-cbind(foo,sub_grp)%>%
+  pivot_longer(-c(ID,sub_grp),names_to="Variable", values_to="Value") %>%
+  group_by(sub_grp, Variable, Value)%>%
+  summarise(n=n())
+
+foo2<-cbind(foo,sub_grp)%>%
+  pivot_longer(-c(ID,sub_grp),names_to="Variable", values_to="Value") %>%
+  group_by(sub_grp, Variable)%>%
+  summarise(m=n())
+
+foo3<- foo1 %>%
+  left_join(foo2) %>%
+  mutate(f=n / m)
+
+
+ggplot(foo3, aes(x = Variable, y=f, group=Value))+
+  geom_bar(stat="identity", aes(fill=as.factor(Value)))+
+  facet_wrap(vars(sub_grp), ncol=5)+
+  coord_flip()+ 
+  scale_fill_manual(values = col)+
+  labs(x=NULL, y=NULL, title=" Segmentation")
+```
+
+# Usages
+
+```{r 06}
+foo<- df %>%
+  select(1,24:40)%>% 
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+foo$value[foo$value=="Fréquemment"]<-"Souvent"
+
+foo<-foo%>%
+  group_by(variable, value)%>%
+  summarise(n=n(), p=n/nrow(df))%>%
+  group_by(variable)%>%
+  mutate(q=last(p))
+
+ggplot(foo, aes(x = reorder(variable,q), y=p, group=value))+
+  geom_bar(stat="identity", aes(fill=value))+
+  coord_flip()+
+  labs(x=NULL)+
+  scale_fill_manual(values=col)
+
+
+
+```
+
+## 
+
+```{r 07}
+#data preparation
+# pour le clustering
+
+k=4 
+foo<- df %>%select(1, 24:40) %>%
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+
+foo$value[foo$value=="Souvent"]<-2
+foo$value[foo$value=="Parfois"]<-1
+foo$value[foo$value=="Jamais"]<-0
+foo$value<- as.numeric(foo$value)
+
+foo<-foo %>%
+  pivot_wider(ID,names_from = "variable", values_from = "value")
+
+#PCA
+fit<-PCA(foo[2:18],ncp = 4)
+fviz_eig(fit, addlabels = TRUE, ylim = c(0, 30))
+fviz_pca_var(fit, col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE # Évite le chevauchement de texte
+             )
+
+# Dissimilarity matrix
+d <- dist(t(foo[2:18]), method = "manhattan")
+
+# Hierarchical clustering using Ward Linkage
+hc1 <- hclust(d, method = "ward" )
+sub_grp <- cutree(hc1, k = k)
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+rect.hclust(hc1, k = k, border = 2:5)
+
+fviz_cluster(list(data = d, cluster = sub_grp))
+
+```
+
+# Platforms
+
+```{r 10}
+
+foo<- df %>%
+  select(1,42:54)%>% 
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+table(foo$value)
+
+foo<-foo%>%
+  group_by(variable, value)%>%
+  summarise(n=n())
+col<-c("Red","Gold2","Gold1","Darkgreen")
+ggplot(foo, aes(x = reorder(variable,n), y=n, group=value))+
+  geom_bar(stat="identity", aes(fill=value))+
+  coord_flip()+
+  labs(x=NULL)+
+  scale_fill_manual(values=col)
+
+#data preparation
+# pour le clustering
+
+k=5 
+foo<- df %>%select(1, 42:54) %>%
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+
+foo$value[foo$value=="Souvent"]<-2
+foo$value[foo$value=="Parfois"]<-1
+foo$value[foo$value=="Jamais"]<-0
+foo$value<- as.numeric(foo$value)
+
+foo<-foo %>%
+  pivot_wider(ID,names_from = "variable", values_from = "value")
+
+#PCA
+fit<-PCA(foo[,2:14],ncp = 4)
+fviz_eig(fit, addlabels = TRUE, ylim = c(0, 30))
+fviz_pca_var(fit, col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE # Évite le chevauchement de texte
+             )
+
+# Dissimilarity matrix
+d <- dist(t(foo[2:14]), method = "euclidean")
+
+# Hierarchical clustering using Ward Linkage
+hc1 <- hclust(d )
+sub_grp <- cutree(hc1, k = k)
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+rect.hclust(hc1, k = k, border = 2:5)
+
+fviz_cluster(list(data = d, cluster = sub_grp))
+
+
+```
+
+# Willingness to pay and engagement
+
+We have two question one relevant to equipment, the other to convenient and another one about time spending.
+
+```{r}
+
+df$SpendingMax[df$Spending=="0 euros"] <-0
+df$SpendingMax[df$Spending=="0 euros, 10 euros"] <-10
+df$SpendingMax[df$Spending=="10 euros"] <-10
+df$SpendingMax[df$Spending=="10 euros, 20 euros"] <-20
+df$SpendingMax[df$Spending=="20 euros"] <-20
+df$SpendingMax[df$Spending=="50 euros"] <-50
+df$SpendingMax[df$Spending=="100 euros"] <-100
+df$SpendingMax[df$Spending=="200 euros"] <-200
+df$SpendingMax[df$Spending=="200 euros et plus"] <-400
+
+ggplot(df, aes(x=SpendingMax))+geom_bar()
+table(df$ValueMax)
+df$ValueMax[df$Value=="moins de 50 euros"] <-50
+df$ValueMax[df$Value=="moins de 50 euros, 100 euros"] <-100
+df$ValueMax[df$Value=="100 euros"] <-100
+df$ValueMax[df$Value=="200 euros"] <-200
+df$ValueMax[df$Value=="500 euros"] <-500
+df$ValueMax[df$Value=="1000 euros"] <-1000
+df$ValueMax[df$Value=="2000 euros"] <-2000
+df$ValueMax[df$Value=="200 euros, 2000 euros"] <-2000
+
+df$ValueMax[df$Value=="2000 euros, 5000 euros et plus"] <-5000
+df$ValueMax[df$Value=="5000 euros et plus"] <-5000
+
+ggplot(df, aes(x=ValueMax))+geom_bar()+coord_flip()
+
+
+ggplot(df, aes(x=ValueMax, y=SpendingMax))+
+  geom_point()+
+  geom_smooth(method="lm")+scale_x_log10()+scale_y_log10()
+
+table(df$Time)
+df$TimeMax[df$Time=="Moins de 2h"] <-2
+df$TimeMax[df$Time=="Entre 2 et 4h"] <-4
+df$TimeMax[df$Time=="Entre 4 et 8h"] <-8
+df$TimeMax[df$Time=="Entre 8 et 16h"] <-16
+df$TimeMax[df$Time=="Plus de 16h"] <-24
+table(df$Time)
+
+ggplot(df, aes(x=TimeMax))+geom_bar()+coord_flip()
+
+foo<-df%>%
+  select(ValueMax, SpendingMax, TimeMax)
+r<-foo %>%
+  drop_na()%>%
+  cor()
+r
+
+pca<-PCA(foo, scale.unit = TRUE, ncp = 2, graph = TRUE)
+score<-pca$ind$coord
+df<-cbind(df, score)
+
+foo<- df%>%group_by(Age)%>%
+  summarise(score1_m= mean(Dim.1, na.rm=TRUE),
+            score2_t= mean(Dim.2, na.rm=TRUE)
+            )%>%
+  pivot_longer(-Age, names_to = "dim" , values_to = "score")
+ggplot(foo, aes(x=Age,y=score,group=dim))+geom_line(aes(color=dim))+coord_flip()
+```

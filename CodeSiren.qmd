@@ -1,0 +1,53 @@
+---
+title: "Siren2023"
+author: "CB"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r 01}
+#charger la tool box
+library(tidyverse)
+#importer le fichier 
+df <- read_csv("MusicPlateform2.csv") %>%
+  rename(Age=71)
+
+df$Age <- factor(df$Age, ordered = TRUE, 
+                                levels = c("moins de 18 ans", 
+                                           "de 18 à 20 ans", 
+                                           "21 à 25 ans", 
+                                           "de 26 à 30 ans", 
+                                           "31 à 40 ans",
+                                           "de 41 à 60 ans",
+                                           "plus de 60 ans"))
+foo<- as.data.frame(table(df$Age))
+
+ggplot(foo,aes(x=Var1, y=Freq))+
+  geom_bar(stat="identity", fill="pink")+
+  coord_flip()+
+  labs(title=" mon premier graphe", x=NULL, y=NULL)
+
+
+```
+
+You can add options to executable code like this
+
+```{r 02}
+
+ggplot(mtcars, aes(mpg, wt)) +
+  geom_point()
+
+ggsave("G1.jpeg", plot=last_plot(), width = 28, height = 20, units = "cm")
+
+
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).

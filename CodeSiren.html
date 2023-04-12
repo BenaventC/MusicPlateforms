@@ -6,9 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="CB">
+<meta name="author" content="Christophe Benavent">
+<meta name="dcterms.date" content="2023-04-12">
 
-<title>Siren2023</title>
+<title>Séance 1 : introduction et environnement de travail</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -97,41 +98,56 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="CodeSiren_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="CodeSiren_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="CodeSiren_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<style>
+    .quarto-title-block .quarto-title-banner {
+      background-image: url(img01.jpeg);
+background-size: cover;
+    }
+    </style>
 
 
 </head>
 
 <body class="fullcontent">
 
-<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Siren2023</h1>
-</div>
-
-
-
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>CB </p>
-          </div>
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Séance 1 : introduction et environnement de travail</h1>
+            <p class="subtitle lead">Master 2 siren 2023</p>
+                      </div>
   </div>
     
   
-    
-  </div>
-  
+  <div class="quarto-title-meta">
 
-</header>
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Christophe Benavent </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 12, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
 
 <section id="préalable" class="level2">
-<h2 class="anchored" data-anchor-id="préalable">préalable</h2>
+<h2 class="anchored" data-anchor-id="préalable">Préalable</h2>
 <ul>
 <li>Installer <a href="https://cran.r-project.org/">r</a> , le langage.</li>
 <li>Installer <a href="https://posit.co/download/rstudio-desktop/">rstudio</a>, l’environnement de travail.</li>
@@ -144,7 +160,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="un-premier-code" class="level2">
 <h2 class="anchored" data-anchor-id="un-premier-code">Un premier code</h2>
-<p>Le code lit un fichier csv nommé <code>"MusicPlateform2.csv"</code> et l’assigne à un dataframe <code>df</code>. La fonction <code>rename()</code> est utilisée pour renommer la 71ème colonne par <code>Age</code>. Ensuite, le code convertit la colonne <code>Age</code> en un facteur avec des niveaux ordonnés qui reflètent les différents groupes d’âge. La fonction <code>table()</code> est utilisée pour créer une table de fréquence de la colonne Age et l’assigne à <code>foo</code>.</p>
+<p>Le code lit un fichier csv nommé <code>"MusicPlateform2.csv"</code> et l’assigne à un dataframe <code>df</code>. Ce fichier vient de l’enquête sur les plateformes musicales dont le questionnaire est <a href=""><strong>ici</strong></a> (N’hésitez pas à y répondre!)</p>
+<p>La fonction <code>rename()</code> est utilisée pour renommer la 71ème colonne par <code>Age</code>. Ensuite, le code convertit la colonne <code>Age</code> en un facteur avec des niveaux ordonnés qui reflètent les différents groupes d’âge. La fonction <code>table()</code> est utilisée pour créer une table de fréquence de la colonne Age et l’assigne à <code>foo</code>.</p>
 <p>Enfin, <code>ggplot()</code> est utilisé pour créer un graphique à barres où la colonne <code>Var1</code> (qui contient les groupes d’âge) est affichée sur l’axe <code>x</code>, et la colonne <code>Freq</code> (qui contient les fréquences) est affichée sur l’axe <code>y</code>. La fonction <code>geom_bar()</code> est utilisée pour créer un graphique à barres, et <code>coord_flip()</code> est utilisé pour inverser les axes x et y. <code>labs()</code> est utilisé pour ajouter un titre au graphique et pour supprimer les étiquettes des axes x et y.</p>
 <div class="cell">
 <details>
@@ -155,32 +172,43 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#importer le fichier </span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"MusicPlateform2.csv"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Age=</span><span class="dv">71</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#recoder et ordonner les modalité d'âge</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>Age, <span class="at">ordered =</span> <span class="cn">TRUE</span>, </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                                <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"moins de 18 ans"</span>, </span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 18 à 20 ans"</span>, </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"21 à 25 ans"</span>, </span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 26 à 30 ans"</span>, </span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"31 à 40 ans"</span>,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 41 à 60 ans"</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"plus de 60 ans"</span>))</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co">#transformer la table en dataframe</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>foo<span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(df<span class="sc">$</span>Age))</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># relaiser le graphique</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(foo,<span class="fu">aes</span>(<span class="at">x=</span>Var1, <span class="at">y=</span>Freq))<span class="sc">+</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">fill=</span><span class="st">"pink"</span>)<span class="sc">+</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">" mon premier graphe"</span>, <span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(df<span class="sc">$</span>Age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ de 18 à 20 ans  de 21 à 25 ans  de 26 à 30 ans  de 31 à 40 ans  de 41 à 60 ans 
+              4              95               8              14              37 
+moins de 18 ans  plus de 60 ans 
+              5              14 </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#recoder et ordonner les modalité d'âge</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>Age <span class="ot">&lt;-</span> <span class="fu">factor</span>(df<span class="sc">$</span>Age, <span class="at">ordered =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"moins de 18 ans"</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 18 à 20 ans"</span>, </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 21 à 25 ans"</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 26 à 30 ans"</span>, </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 31 à 40 ans"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"de 41 à 60 ans"</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">"plus de 60 ans"</span>))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#transformer la table en dataframe</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>foo<span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">table</span>(df<span class="sc">$</span>Age))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># relaiser le graphique</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(foo,<span class="fu">aes</span>(<span class="at">x=</span>Var1, <span class="at">y=</span>Freq))<span class="sc">+</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat=</span><span class="st">"identity"</span>, <span class="at">fill=</span><span class="st">"pink"</span>)<span class="sc">+</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Mon premier graphe"</span>, <span class="at">x=</span><span class="cn">NULL</span>, <span class="at">y=</span><span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="CodeSiren_files/figure-html/01-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sauvegarder le dossier </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"G1.jpeg"</span>, <span class="at">plot=</span><span class="fu">last_plot</span>(), <span class="at">width =</span> <span class="dv">28</span>, <span class="at">height =</span> <span class="dv">20</span>, <span class="at">units =</span> <span class="st">"cm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># sauvegarder le dossier </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"G1.jpeg"</span>, <span class="at">plot=</span><span class="fu">last_plot</span>(), <span class="at">width =</span> <span class="dv">28</span>, <span class="at">height =</span> <span class="dv">20</span>, <span class="at">units =</span> <span class="st">"cm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>

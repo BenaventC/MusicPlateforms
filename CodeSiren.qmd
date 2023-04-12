@@ -1,15 +1,18 @@
 ---
-title: "Siren2023"
-author: "CB"
+title: "Séance 1 : introduction et environnement de travail"
+subtitle: "Master 2 siren 2023" 
+title-block-banner: img01.jpeg
+author: "Christophe Benavent"
+date: today
 format: html
-execute :
+execute : 
   message: false
   warning: false
 code-fold: true
 editor: visual
 ---
 
-## préalable
+## Préalable
 
 * Installer [r](https://cran.r-project.org/) , le langage.
 * Installer [rstudio](https://posit.co/download/rstudio-desktop/), l'environnement de travail.
@@ -21,7 +24,9 @@ Quarto vous permet d'assembler le contenu et le code exécutable dans un documen
 
 ## Un premier code
 
-Le code lit un fichier csv nommé `"MusicPlateform2.csv"` et l'assigne à un dataframe `df`. La fonction `rename()` est utilisée pour renommer la 71ème colonne par `Age`. Ensuite, le code convertit la colonne `Age` en un facteur avec des niveaux ordonnés qui reflètent les différents groupes d'âge. La fonction `table()` est utilisée pour créer une table de fréquence de la colonne Age et l'assigne à `foo`.
+Le code lit un fichier csv nommé `"MusicPlateform2.csv"` et l'assigne à un dataframe `df`. Ce fichier vient de l'enquête sur les plateformes musicales dont le questionnaire est [**ici**]() (N'hésitez pas à y répondre!)
+
+La fonction `rename()` est utilisée pour renommer la 71ème colonne par `Age`. Ensuite, le code convertit la colonne `Age` en un facteur avec des niveaux ordonnés qui reflètent les différents groupes d'âge. La fonction `table()` est utilisée pour créer une table de fréquence de la colonne Age et l'assigne à `foo`.
 
 Enfin, `ggplot()` est utilisé pour créer un graphique à barres où la colonne `Var1` (qui contient les groupes d'âge) est affichée sur l'axe `x`, et la colonne `Freq` (qui contient les fréquences) est affichée sur l'axe `y`. La fonction `geom_bar()` est utilisée pour créer un graphique à barres, et `coord_flip()` est utilisé pour inverser les axes x et y. `labs()` est utilisé pour ajouter un titre au graphique et pour supprimer les étiquettes des axes x et y.
 
@@ -32,14 +37,15 @@ library(tidyverse)
 #importer le fichier 
 df <- read_csv("MusicPlateform2.csv") %>%
   rename(Age=71)
+table(df$Age)
 #recoder et ordonner les modalité d'âge
 
 df$Age <- factor(df$Age, ordered = TRUE, 
                                 levels = c("moins de 18 ans", 
                                            "de 18 à 20 ans", 
-                                           "21 à 25 ans", 
+                                           "de 21 à 25 ans", 
                                            "de 26 à 30 ans", 
-                                           "31 à 40 ans",
+                                           "de 31 à 40 ans",
                                            "de 41 à 60 ans",
                                            "plus de 60 ans"))
 #transformer la table en dataframe
@@ -49,7 +55,7 @@ foo<- as.data.frame(table(df$Age))
 ggplot(foo,aes(x=Var1, y=Freq))+
   geom_bar(stat="identity", fill="pink")+
   coord_flip()+
-  labs(title=" mon premier graphe", x=NULL, y=NULL)
+  labs(title="Mon premier graphe", x=NULL, y=NULL)
 
 # sauvegarder le dossier 
 ggsave("G1.jpeg", plot=last_plot(), width = 28, height = 20, units = "cm")

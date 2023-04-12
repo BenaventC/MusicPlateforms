@@ -156,11 +156,11 @@ background-size: cover;
 </section>
 <section id="quarto" class="level2">
 <h2 class="anchored" data-anchor-id="quarto">Quarto</h2>
-<p>Quarto vous permet d’assembler le contenu et le code exécutable dans un document fini. Pour en savoir plus sur Quarto, voir <a href="https://quarto.org" class="uri">https://quarto.org</a>. Lorsque vous cliquez sur le bouton <strong>Rendu</strong>, un document est généré qui comprend à la fois le contenu et la sortie du code intégré. Vous pouvez intégrer du code comme suit :</p>
+<p>Quarto vous permet d’assembler le contenu et le code exécutable dans un document fini. Pour en savoir plus sur Quarto, voir <a href="https://quarto.org" class="uri">https://quarto.org</a>. Lorsque vous cliquez sur le bouton <strong>Rendu</strong>, un document est généré qui comprend à la fois le contenu et la sortie du code intégré.</p>
 </section>
 <section id="un-premier-code" class="level2">
 <h2 class="anchored" data-anchor-id="un-premier-code">Un premier code</h2>
-<p>Le code lit un fichier csv nommé <code>"MusicPlateform2.csv"</code> et l’assigne à un dataframe <code>df</code>. Ce fichier vient de l’enquête sur les plateformes musicales dont le questionnaire est <a href=""><strong>ici</strong></a> (N’hésitez pas à y répondre!)</p>
+<p>Le code lit un fichier csv nommé <code>"MusicPlateform2.csv"</code> et l’assigne à un dataframe <code>df</code>. Ce fichier vient de l’enquête sur les plateformes musicales dont le questionnaire est <a href="https://forms.gle/GNLGWzMtVj7SubCc6"><strong>ici</strong></a> (N’hésitez pas à y répondre!)</p>
 <p>La fonction <code>rename()</code> est utilisée pour renommer la 71ème colonne par <code>Age</code>. Ensuite, le code convertit la colonne <code>Age</code> en un facteur avec des niveaux ordonnés qui reflètent les différents groupes d’âge. La fonction <code>table()</code> est utilisée pour créer une table de fréquence de la colonne Age et l’assigne à <code>foo</code>.</p>
 <p>Enfin, <code>ggplot()</code> est utilisé pour créer un graphique à barres où la colonne <code>Var1</code> (qui contient les groupes d’âge) est affichée sur l’axe <code>x</code>, et la colonne <code>Freq</code> (qui contient les fréquences) est affichée sur l’axe <code>y</code>. La fonction <code>geom_bar()</code> est utilisée pour créer un graphique à barres, et <code>coord_flip()</code> est utilisé pour inverser les axes x et y. <code>labs()</code> est utilisé pour ajouter un titre au graphique et pour supprimer les étiquettes des axes x et y.</p>
 <div class="cell">

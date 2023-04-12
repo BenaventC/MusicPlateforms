@@ -20,11 +20,11 @@ editor: visual
 
 ## Quarto
 
-Quarto vous permet d'assembler le contenu et le code exécutable dans un document fini. Pour en savoir plus sur Quarto, voir <https://quarto.org>. Lorsque vous cliquez sur le bouton **Rendu**, un document est généré qui comprend à la fois le contenu et la sortie du code intégré. Vous pouvez intégrer du code comme suit :
+Quarto vous permet d'assembler le contenu et le code exécutable dans un document fini. Pour en savoir plus sur Quarto, voir <https://quarto.org>. Lorsque vous cliquez sur le bouton **Rendu**, un document est généré qui comprend à la fois le contenu et la sortie du code intégré. 
 
 ## Un premier code
 
-Le code lit un fichier csv nommé `"MusicPlateform2.csv"` et l'assigne à un dataframe `df`. Ce fichier vient de l'enquête sur les plateformes musicales dont le questionnaire est [**ici**]() (N'hésitez pas à y répondre!)
+Le code lit un fichier csv nommé `"MusicPlateform2.csv"` et l'assigne à un dataframe `df`. Ce fichier vient de l'enquête sur les plateformes musicales dont le questionnaire est [**ici**](https://forms.gle/GNLGWzMtVj7SubCc6) (N'hésitez pas à y répondre!)
 
 La fonction `rename()` est utilisée pour renommer la 71ème colonne par `Age`. Ensuite, le code convertit la colonne `Age` en un facteur avec des niveaux ordonnés qui reflètent les différents groupes d'âge. La fonction `table()` est utilisée pour créer une table de fréquence de la colonne Age et l'assigne à `foo`.
 

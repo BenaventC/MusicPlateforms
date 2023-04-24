@@ -1,0 +1,115 @@
+---
+title: "Séance 2 : analyse bivariée"
+subtitle: "Master 2 siren 2023" 
+title-block-banner: img01.jpeg
+author: "Christophe Benavent"
+date: today
+format: html
+execute : 
+  message: false
+  warning: false
+code-fold: true
+editor: visual
+---
+
+## Préalable
+
+## lecture du fichier
+
+Quarto vous permet d'assembler le contenu et le code exécutable dans un document fini. Pour en savoir plus sur Quarto, voir <https://quarto.org>. Lorsque vous cliquez sur le bouton **Rendu**, un document est généré qui comprend à la fois le contenu et la sortie du code intégré.
+
+```{r  01}
+library(tidyverse)
+df <- read_csv("MusicPlateform2.csv")%>%
+  rename(ID=1,
+         Rock=2,
+         PopInter=3,
+         HipHop=4,
+         World=5,
+         Salsa=6,
+         Classique=7,
+         Techno=8,
+         HardRock=9,
+         Baroque=10,
+         Folk=11,
+         Reggae=12,
+         ChansonFrançaise=13,
+         RockAlt=14,
+         Dance=15,
+         Jazz=16,
+         AfroPop=17,
+         Opera=18,
+         Arabic=19,
+         Blues=20,
+         JK_pop=21,
+         Rap=22,
+         SoulFunk=23,
+         S_travail=24,
+         S_Live=25,
+         S_Voiture=26,
+         S_Menage=27,
+         S_Ami=28,
+         S_Bars=29,
+         S_Transport=30,
+         S_Lire=31,
+         S_Douche=32,
+         D_Vynil=33,
+         D_Streaming=34,
+         D_smartphone=35,
+         D_concert=36,
+         D_laptop=37,
+         D_ecouteurs=38,
+         D_mix=39,
+         D_radiotv=40,
+         P_Youtube=42,
+         P_Spotify=43,
+         P_Deezer=44,
+         P_Souncloud=45,
+         P_Bandcamp=46, 
+         P_Discog=47,
+         P_Tidal=48,
+         P_Amazon=49,
+         P_Mixcloud=50,
+         P_AppleM=51,
+         P_Qobuz=52,
+         P_Pandora=53,
+         P_Netease=54,
+         Time=68,
+         Spending=69,
+         Value=70, 
+         Age=71,
+         Genre=72)
+
+
+df$Age<-factor(df$Age, ordered = TRUE, 
+                                levels = c("moins de 18 ans", "de 18 à 20 ans",
+                                           "de 21 à 25 ans", "de 26 à 30 ans",
+                                           "de 31 à 40 ans", "de 41 à 60 ans",
+                                           "plus de 60 ans"))
+
+table(df$Age)
+
+#color palette
+col<-c("Coral","Pink","Gold","Orange")
+
+```
+
+## Comparer des moyennes
+
+```{r 01}
+df$Time2[df$Time2="Entre 2 et 4h"]<-"1"
+df$Time2[df$Time2="Entre 2 et 4h"]<-"2"
+df$Time2[df$Time2="Entre 2 et 4h"]<-"1"
+df$Time2[df$Time2="Entre 2 et 4h"]<-"1"
+df$Time2[df$Time2="Entre 2 et 4h"]<-"1"
+
+# realiser le graphique
+ggplot(foo,aes(x=Var1, y=Freq))+
+  geom_bar(stat="identity", fill="pink")+
+  coord_flip()+
+  labs(title="Mon premier graphe", x=NULL, y=NULL)
+
+# sauvegarder le dossier 
+ggsave("G1.jpeg", plot=last_plot(), width = 28, height = 20, units = "cm")
+
+```

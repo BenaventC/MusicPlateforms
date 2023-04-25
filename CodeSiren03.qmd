@@ -1,0 +1,400 @@
+---
+title: "Séance 3 : ACP et clustering"
+subtitle: "Master 2 siren 2023" 
+title-block-banner: img01.jpeg
+author: "Christophe Benavent"
+date: today
+format: html
+execute : 
+  message: false
+  warning: false
+code-fold: true
+editor: visual
+---
+
+## Data
+
+```{r 01}
+library(tidyverse)
+df <- read_csv("Plateformes3.csv")%>%
+  rename(ID=1,
+         Rock=2,
+         PopInter=3,
+         HipHop=4,
+         World=5,
+         Salsa=6,
+         Classique=7,
+         Techno=8,
+         HardRock=9,
+         Baroque=10,
+         Folk=11,
+         Reggae=12,
+         ChansonFrançaise=13,
+         RockAlt=14,
+         Dance=15,
+         Jazz=16,
+         AfroPop=17,
+         Opera=18,
+         Arabic=19,
+         Blues=20,
+         JK_pop=21,
+         Rap=22,
+         SoulFunk=23,
+         S_travail=24,
+         S_Live=25,
+         S_Voiture=26,
+         S_Menage=27,
+         S_Ami=28,
+         S_Bars=29,
+         S_Transport=30,
+         S_Lire=31,
+         S_Douche=32,
+         D_Vynil=33,
+         D_Streaming=34,
+         D_smartphone=35,
+         D_concert=36,
+         D_laptop=37,
+         D_ecouteurs=38,
+         D_mix=39,
+         D_radiotv=40,
+         P_Youtube=42,
+         P_Spotify=43,
+         P_Deezer=44,
+         P_Souncloud=45,
+         P_Bandcamp=46, 
+         P_Discog=47,
+         P_Tidal=48,
+         P_Amazon=49,
+         P_Mixcloud=50,
+         P_AppleM=51,
+         P_Qobuz=52,
+         P_Pandora=53,
+         P_Netease=54,
+         Time=68,
+         Spending=69,
+         Value=70, 
+         Age=71,
+         Education=72,
+         Genre=73
+         )
+
+
+df$Age<-factor(df$Age, ordered = TRUE, 
+                                levels = c("moins de 18 ans", "de 18 à 20 ans",
+                                           "de 21 à 25 ans", "de 26 à 30 ans",
+                                           "de 31 à 40 ans", "de 41 à 60 ans",
+                                           "plus de 60 ans"))
+#color palette
+col<-c("Coral","Pink","Gold","Orange")
+
+```
+
+# Comparaison de moyenne
+
+```{r 02}
+
+table(df$Time)
+df$Time2<-NA
+df$Time2[df$Time=="Moins de 2h"]<-1
+df$Time2[df$Time=="Entre 2 et 4h"]<-3
+df$Time2[df$Time=="Entre 4 et 8h"]<-6
+df$Time2[df$Time=="Entre 8 et 16h"]<- 12
+df$Time2[df$Time=="Plus de 16h"]<- 24
+
+moyenne_time<-round(mean(df$Time2, na.rm=TRUE), 2)
+moyenne_time<-round(sd(df$Time2, na.rm=TRUE), 2)
+
+
+ggplot(df, aes(x=Time2))+
+  geom_histogram()+
+  labs(title = "distribution des durée d'écoute",
+       subtitle = paste0("Moyenne : ",moyenne_time))
+
+foo <- df %>% group_by(Age)%>%
+  summarise(n =n(),
+            temps_moyen=mean(Time2, na.rm=TRUE),
+            temps_sd=sd(Time2, na.rm=TRUE),
+            sd=temps_sd/sqrt(n)) 
+foo
+
+fit<-lm(Time2 ~ Age,data=df)
+anova(fit)
+
+ggplot(foo, aes(x=Age, y=temps_moyen, group=1))+
+  geom_line(size=2, color="green")+
+  geom_errorbar(aes(ymin=temps_moyen-sd, ymax=temps_moyen+sd), 
+                width=.2, position=position_dodge(.9)) +
+  coord_flip()
+  
+```
+
+# Correlations
+
+```{r 03}
+
+
+table(df$Spending)
+df$SpendingMax<-NA
+df$SpendingMax[df$Spending=="0 euros"] <-0
+df$SpendingMax[df$Spending=="0 euros, 10 euros"] <-10
+df$SpendingMax[df$Spending=="10 euros"] <-10
+df$SpendingMax[df$Spending=="10 euros, 20 euros"] <-20
+df$SpendingMax[df$Spending=="20 euros"] <-20
+df$SpendingMax[df$Spending=="50 euros"] <-50
+df$SpendingMax[df$Spending=="100 euros"] <-100
+df$SpendingMax[df$Spending=="200 euros"] <-200
+df$SpendingMax[df$Spending=="200 euros et plus"] <-400
+
+table(df$SpendingMax)
+
+moyenne_Spending<-round(mean(df$SpendingMax, na.rm=TRUE), 2)
+moyenne_Spending<-round(sd(df$SpendingMax, na.rm=TRUE), 2)
+
+foo<-df %>% 
+  select(Time2,SpendingMax) %>%
+  drop_na()
+
+r<-cor(foo$Time2,foo$SpendingMax)
+
+res<-cor.test(foo$Time2,foo$SpendingMax, method="pearson")
+res
+
+ggplot(foo,aes(Time2, SpendingMax))+geom_point()+
+  geom_smooth()+
+  geom_smooth(method="lm", color="red")+scale_y_log10()
+```
+
+## Correlation entre plus de 3 variables
+
+```{r 04}
+
+table(df$ValueMax)
+df$ValueMax[df$Value=="moins de 50 euros"] <-50
+df$ValueMax[df$Value=="moins de 50 euros, 100 euros"] <-100
+df$ValueMax[df$Value=="100 euros"] <-100
+df$ValueMax[df$Value=="200 euros"] <-200
+df$ValueMax[df$Value=="500 euros"] <-500
+df$ValueMax[df$Value=="1000 euros"] <-1000
+df$ValueMax[df$Value=="2000 euros"] <-2000
+df$ValueMax[df$Value=="200 euros, 2000 euros"] <-2000
+
+df$ValueMax[df$Value=="2000 euros, 5000 euros et plus"] <-5000
+df$ValueMax[df$Value=="5000 euros et plus"] <-5000
+
+ggplot(df, aes(x=ValueMax))+geom_bar()+coord_flip()
+
+
+foo<-df %>% 
+  select(Time2,SpendingMax, ValueMax) %>%
+  drop_na()
+
+r<-cor(foo)
+
+r
+
+library(ggcorrplot)
+
+ggcorrplot(r, hc.order = TRUE, type = "lower",
+   outline.col = "white",
+   ggtheme = ggplot2::theme_gray,
+   colors = col, 
+    lab = TRUE)
+
+
+```
+
+# Linear model
+
+```{r 05}
+
+fit <-lm(SpendingMax~Time2+ValueMax+Age,df)
+summary(fit)
+
+library(jtools)
+summ(fit)
+
+effect_plot(fit,pred=Age,interval = TRUE)
+
+effect_plot(fit,pred=Time2,interval = TRUE, plot.points = TRUE, 
+            jitter = 0.05)
+```
+
+# Question à choix multiple
+
+Une belle application de l'approche [tidy](https://garrettgman.github.io/tidying/)
+
+1\) l'art du pivot
+
+```{r 06}
+
+
+foo<- df %>%
+  select(1:23) %>% 
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+
+```
+
+
+2) recodage
+
+
+```{r 07}
+
+foo$value[foo$value=="J'aime beaucoup"]<-"J'adore"
+foo$value[foo$value=="J'aime pas mal"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime un peu"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime pas trop"]<-"Je n'aime pas"
+
+#variable définition
+foo$value <- factor(foo$value, levels = c("Je n'aime pas",
+                                          "Je ne connais pas",
+                                          "Je peux aimer",
+                                          "J'adore"))
+```
+
+3) le graphique
+
+```{r 08}
+
+#just counting
+foo<-foo%>%
+  group_by(variable, value)%>%
+  summarise(n=n())
+
+
+#plot
+ggplot(foo, aes(x = reorder(variable, value), y=n, group=value))+
+  geom_bar(stat="identity", aes(fill=value))+
+  coord_flip()+
+  labs(x=NULL, y =NULL)+
+  scale_fill_manual(values=col)
+  
+```
+
+
+
+
+```{r 09}
+
+#construire le bon tableau
+
+foo<- df %>%
+  select(1:23) %>% 
+  pivot_longer(-ID,names_to="variable", values_to = "value")
+table(foo$value)
+foo$value[foo$value=="J'aime beaucoup"]<-"J'adore"
+foo$value[foo$value=="J'aime pas mal"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime un peu"]<-"Je peux aimer"
+foo$value[foo$value=="J'aime pas trop"]<-"Je n'aime pas"
+
+foo$value <- factor(foo$value, levels = c("Je n'aime pas",
+                                          "Je ne connais pas",
+                                          "Je peux aimer",
+                                          "J'adore"))
+
+
+foo$value2[foo$value=="Je n'aime pas"]<-1
+foo$value2[foo$value=="Je ne connais pas"]<-2
+foo$value2[foo$value=="Je peux aimer"]<-3
+foo$value2[foo$value=="J'adore"]<-4
+
+foo<-foo %>%
+  select(-value)%>%
+  pivot_wider(id_cols=ID,names_from = "variable", values_from = "value2")
+
+corr<-foo[,2:23]%>%
+  drop_na()%>%
+  cor()
+ggcorrplot(corr, hc.order = TRUE, type = "lower",
+   outline.col = "white",
+   ggtheme = ggplot2::theme_gray,
+   colors = c("#6D9EC1", "white", "#E46726"))
+
+```
+
+# ACP
+
+
+```{r 10}
+#PCA
+
+library(FactoMineR)
+library(factoextra)
+fit<-PCA(foo[2:19],ncp = 4, graph =FALSE)
+fviz_eig(fit, addlabels = TRUE, ylim = c(0, 30))
+
+fviz_pca_var(fit,  axes = c(1, 2), col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE # Évite le chevauchement de texte
+             )
+
+
+fviz_pca_var(fit,  axes = c(2, 3), col.var = "cos2",
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE # Évite le chevauchement de texte
+             )
+
+```
+
+# Clustering
+
+```{r 11}
+
+# Dissimilarity matrix
+d <- dist(t(foo[2:19]), method = "manhattan")
+
+# Hierarchical clustering using Ward Linkage
+hc1 <- hclust(d, method = "ward" )
+sub_grp <- cutree(hc1, k = 7)
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+rect.hclust(hc1, k = 7, border = 2:5)
+
+fviz_cluster(list(data = d, cluster = sub_grp))
+
+```
+# Segmentation
+
+
+```{r 12}
+#number of groups
+k=5
+
+# Dissimilarity matrix
+d <- dist(foo[2:23], method = "manhattan")
+
+# Hierarchical clustering using Ward Linkage
+hc1 <- hclust(d, method = "ward" )
+sub_grp <- cutree(hc1, k = k)
+
+# Plot the obtained dendrogram
+plot(hc1, cex = 0.6, hang = -1)
+rect.hclust(hc1, k = k, border = 2:5)
+
+fviz_cluster(list(data = d, cluster = sub_grp,  ellipse.type = "norm"))
+
+foo1<-cbind(foo,sub_grp)%>%
+  pivot_longer(-c(ID,sub_grp),names_to="Variable", values_to="Value") %>%
+  group_by(sub_grp, Variable, Value)%>%
+  summarise(n=n())
+
+foo2<-cbind(foo,sub_grp)%>%
+  pivot_longer(-c(ID,sub_grp),names_to="Variable", values_to="Value") %>%
+  group_by(sub_grp, Variable)%>%
+  summarise(m=n())
+
+foo3<- foo1 %>%
+  left_join(foo2) %>%
+  mutate(f=n / m)
+
+
+ggplot(foo3, aes(x = Variable, y=f, group=Value))+
+  geom_bar(stat="identity", aes(fill=as.factor(Value)))+
+  facet_wrap(vars(sub_grp), ncol=5)+
+  coord_flip()+ 
+  scale_fill_manual(values = col)+
+  labs(x=NULL, y=NULL, title=" Segmentation")
+```
+
+

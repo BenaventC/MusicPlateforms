@@ -51,7 +51,7 @@ df$Age <- factor(df$Age, ordered = TRUE,
 #transformer la table en dataframe
 foo<- as.data.frame(table(df$Age))
 
-# relaiser le graphique
+# realiser le graphique
 ggplot(foo,aes(x=Var1, y=Freq))+
   geom_bar(stat="identity", fill="pink")+
   coord_flip()+

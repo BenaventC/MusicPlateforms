@@ -182,9 +182,14 @@ foo$value2[foo$value=="J'adore"]<-4
 
 foo<-foo %>%
   select(-value)%>%
-  pivot_wider(ID,names_from = "variable", values_from = "value2")
+  pivot_wider(id_cols=ID,names_from = "variable", values_from = "value2")
+{r 04}
+{r 04}
 
 #PCA
+
+library(FactoMineR)
+library(factoextra)
 fit<-PCA(foo[2:19],ncp = 4, graph =FALSE)
 fviz_eig(fit, addlabels = TRUE, ylim = c(0, 30))
 
@@ -192,6 +197,7 @@ fviz_pca_var(fit,  axes = c(2, 3), col.var = "cos2",
              gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
              repel = TRUE # Évite le chevauchement de texte
              )
+
 
 # Dissimilarity matrix
 d <- dist(t(foo[2:19]), method = "manhattan")
